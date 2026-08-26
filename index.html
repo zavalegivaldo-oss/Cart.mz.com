@@ -1,0 +1,2040 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+<title>Simulador USSD</title>
+
+<style>
+:root{
+    --bg:#000;
+    --panel:#29292d;
+    --green:#10c96b;
+    --white:#fff;
+
+    --numero:43px;
+    --letra:14px;
+    --codigo:30px;
+
+    --video:42px;
+    --chamada:66px;
+    --apagar:46px;
+    --sim:13px;
+
+    --processamento-tamanho:19px;
+    --processamento-altura:86px;
+}
+
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#fff;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+}
+
+.app{
+    position:relative;
+    width:100%;
+    max-width:500px;
+    height:100vh;
+    background:#000;
+    overflow:hidden;
+}
+
+/* ================= TOPO ================= */
+
+.topbar{
+    position:absolute;
+    top:27px;
+    right:17px;
+    height:42px;
+
+    display:flex;
+    align-items:center;
+    gap:18px;
+
+    color:#aaa;
+}
+
+.top-search{
+    font-size:37px;
+    line-height:1;
+    transform:rotate(-15deg);
+}
+
+.top-plus{
+    position:absolute;
+    top:29px;
+    left:auto;
+    right:83px;
+
+    width:38px;
+    height:38px;
+
+    border:0;
+    background:transparent;
+    color:#eee;
+
+    font-size:31px;
+    font-weight:300;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.top-more{
+    font-size:31px;
+    line-height:1;
+}
+
+/* ================= CÓDIGO ================= */
+
+.dial-area{
+    position:absolute;
+    top:112px;
+    left:0;
+    right:0;
+    height:70px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.dial-display{
+    min-width:50px;
+
+    color:#fff;
+    font-size:var(--codigo);
+    font-weight:500;
+
+    text-align:center;
+    white-space:nowrap;
+
+    outline:none;
+}
+
+.dial-display:empty:before{
+    content:"";
+}
+
+/* ================= TECLADO ================= */
+
+.keypad{
+    position:absolute;
+
+    top:260px;
+    left:8%;
+    right:8%;
+
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+
+    row-gap:25px;
+}
+
+.key{
+    width:70px;
+    height:64px;
+
+    margin:auto;
+
+    border:0;
+    border-radius:50%;
+
+    background:transparent;
+
+    color:#777;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+
+    cursor:pointer;
+}
+
+.key:active{
+    background:#151515;
+    transform:scale(.94);
+}
+
+.key-number{
+    color:#777;
+    font-size:var(--numero);
+    line-height:38px;
+    font-weight:300;
+}
+
+.key-label{
+    color:#777;
+    font-size:var(--letra);
+    line-height:16px;
+}
+
+.key.special .key-number{
+    font-size:44px;
+}
+
+/* ================= BOTÕES INFERIORES ================= */
+
+.bottom-area{
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:63px;
+
+    height:88px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* VÍDEO */
+
+.video-button{
+    position:absolute;
+
+    left:16%;
+    top:25px;
+
+    width:var(--video);
+    height:var(--video);
+
+    border:0;
+    padding:0;
+
+    background:transparent;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.video-icon{
+    position:relative;
+
+    width:29px;
+    height:22px;
+
+    background:var(--green);
+    border-radius:5px;
+}
+
+.video-icon:after{
+    content:"";
+
+    position:absolute;
+
+    right:-9px;
+    top:3px;
+
+    width:0;
+    height:0;
+
+    border-top:8px solid transparent;
+    border-bottom:8px solid transparent;
+    border-left:11px solid var(--green);
+}
+
+/* CHAMADA */
+
+.call-button{
+    position:absolute;
+
+    left:50%;
+    top:8px;
+
+    transform:translateX(-50%);
+
+    width:var(--chamada);
+    height:var(--chamada);
+
+    border:0;
+    border-radius:50%;
+
+    background:var(--green);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:0 4px 15px rgba(16,201,107,.35);
+
+    cursor:pointer;
+}
+
+.call-button:active{
+    transform:translateX(-50%) scale(.94);
+}
+
+.phone-icon-new{
+    width:34px;
+    height:34px;
+    fill:#fff;
+}
+
+/* APAGAR */
+
+.backspace-button{
+    position:absolute;
+
+    right:16%;
+    top:24px;
+
+    width:var(--apagar);
+    height:var(--apagar);
+
+    border:0;
+    background:transparent;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.backspace-icon{
+    position:relative;
+
+    width:37px;
+    height:26px;
+
+    background:#f3f3f3;
+
+    border-radius:4px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.backspace-icon:before{
+    content:"";
+
+    position:absolute;
+    left:-13px;
+
+    width:0;
+    height:0;
+
+    border-top:13px solid transparent;
+    border-bottom:13px solid transparent;
+    border-right:14px solid #f3f3f3;
+}
+
+.backspace-x{
+    color:#111;
+    font-size:23px;
+    line-height:1;
+}
+
+/* ================= SIM ================= */
+
+.sim-card{
+    position:absolute;
+
+    left:50%;
+    bottom:13px;
+
+    transform:translateX(-50%);
+
+    min-width:108px;
+    height:35px;
+
+    padding:0 11px;
+
+    border-radius:20px;
+
+    background:#29292d;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:var(--sim);
+    color:#eee;
+}
+
+.sim-icon{
+    width:22px;
+    height:22px;
+
+    margin-right:6px;
+
+    border-radius:4px;
+
+    background:#3d7fea;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:13px;
+}
+
+/* ================= BARRA ================= */
+
+.navbar{
+    position:absolute;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:4px;
+
+    display:flex;
+    justify-content:center;
+}
+
+.navbar-line{
+    width:115px;
+    height:3px;
+
+    border-radius:5px;
+    background:#777;
+}
+
+/* ================= PROCESSAMENTO ================= */
+
+.processing{
+    position:absolute;
+
+    left:14px;
+    right:14px;
+    bottom:23px;
+
+    min-height:var(--processamento-altura);
+
+    padding:20px 23px;
+
+    border-radius:21px;
+
+    background:#29292d;
+
+    display:none;
+    align-items:center;
+
+    z-index:200;
+
+    box-shadow:0 8px 35px rgba(0,0,0,.8);
+}
+
+.processing.show{
+    display:flex;
+}
+
+.spinner{
+    width:34px;
+    height:34px;
+
+    margin-right:17px;
+
+    border:4px solid #555;
+    border-top-color:#fff;
+
+    border-radius:50%;
+
+    animation:girar .8s linear infinite;
+}
+
+.processing-text{
+    color:#fff;
+
+    font-size:var(--processamento-tamanho);
+    font-weight:500;
+}
+
+@keyframes girar{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* ================= USSD ================= */
+
+.ussd-overlay{
+    position:absolute;
+    inset:0;
+
+    display:none;
+    align-items:flex-end;
+
+    padding:0 17px 25px;
+
+    z-index:150;
+}
+
+.ussd-overlay.show{
+    display:flex;
+}
+
+.ussd-window{
+    width:100%;
+
+    background:#29292d;
+
+    border-radius:22px;
+
+    padding:28px 42px 7px;
+
+    box-shadow:0 10px 40px rgba(0,0,0,.8);
+}
+
+.ussd-message{
+    color:#f4f4f4;
+
+    font-size:20px;
+    line-height:1.27;
+
+    max-height:460px;
+    overflow:auto;
+
+    outline:none;
+}
+
+.ussd-input-line{
+    margin-top:18px;
+
+    height:40px;
+
+    border-bottom:3px solid #ddd;
+}
+
+.ussd-input{
+    width:100%;
+    height:38px;
+
+    border:0;
+    outline:none;
+
+    background:transparent;
+
+    color:#fff;
+
+    font-size:20px;
+}
+
+.ussd-buttons{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    margin-top:8px;
+}
+
+.ussd-buttons button{
+    height:58px;
+
+    border:0;
+    background:transparent;
+
+    color:#fff;
+
+    font-size:22px;
+    font-weight:600;
+}
+
+.ussd-buttons button:first-child{
+    border-right:2px solid #555;
+}
+
+/* ================= RESULTADO ================= */
+
+.result-overlay{
+    position:absolute;
+    inset:0;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:17px;
+
+    z-index:180;
+}
+
+.result-overlay.show{
+    display:flex;
+}
+
+.result-window{
+    width:100%;
+    max-width:380px;
+
+    background:#29292d;
+
+    border-radius:18px;
+
+    padding:18px 17px 6px;
+}
+
+.result-text{
+    min-height:75px;
+
+    color:#eee;
+
+    font-size:14px;
+    line-height:18px;
+
+    outline:none;
+}
+
+.result-ok{
+    width:100%;
+    height:46px;
+
+    border:0;
+    background:transparent;
+
+    color:#fff;
+
+    font-size:14px;
+}
+
+/* ================= CONTROLO ================= */
+
+.settings-overlay{
+    position:absolute;
+    inset:0;
+
+    display:none;
+    align-items:flex-end;
+
+    background:rgba(0,0,0,.68);
+
+    z-index:500;
+}
+
+.settings-overlay.show{
+    display:flex;
+}
+
+.settings{
+    width:100%;
+    max-height:91vh;
+
+    overflow:auto;
+
+    background:#202124;
+
+    border-radius:24px 24px 0 0;
+
+    padding:18px 20px 24px;
+}
+
+.settings-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    margin-bottom:18px;
+}
+
+.settings-title{
+    font-size:20px;
+    font-weight:600;
+}
+
+.close-settings{
+    width:36px;
+    height:36px;
+
+    border:0;
+    border-radius:50%;
+
+    background:#333;
+    color:#fff;
+
+    font-size:22px;
+}
+
+.control-tabs{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:5px;
+
+    margin-bottom:18px;
+}
+
+.control-tab{
+    border:0;
+    border-radius:9px;
+
+    height:42px;
+
+    background:#303134;
+    color:#aaa;
+
+    font-size:11px;
+}
+
+.control-tab.active{
+    background:#10c96b;
+    color:#fff;
+}
+
+.control-page{
+    display:none;
+}
+
+.control-page.active{
+    display:block;
+}
+
+.setting{
+    margin-bottom:19px;
+}
+
+.setting-title{
+    margin-bottom:8px;
+
+    color:#aaa;
+    font-size:12px;
+}
+
+.range{
+    width:100%;
+    accent-color:#10c96b;
+}
+
+.range-value{
+    margin-top:5px;
+    color:#fff;
+    font-size:12px;
+}
+
+.time-buttons{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:7px;
+}
+
+.time-buttons button{
+    height:40px;
+
+    border:0;
+    border-radius:8px;
+
+    background:#333;
+    color:#eee;
+}
+
+.time-buttons button.selected{
+    background:#10c96b;
+}
+
+/* ================= FLUXO ================= */
+
+.flow-list{
+    display:flex;
+    flex-direction:column;
+    gap:9px;
+}
+
+.flow-item{
+    display:grid;
+    grid-template-columns:30px 1fr 40px;
+    gap:7px;
+    align-items:start;
+}
+
+.flow-number{
+    width:30px;
+    height:30px;
+
+    border-radius:50%;
+
+    background:#333;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:12px;
+}
+
+.flow-item textarea{
+    width:100%;
+
+    min-height:70px;
+
+    border:1px solid #444;
+    border-radius:8px;
+
+    background:#303134;
+    color:#fff;
+
+    padding:9px;
+
+    outline:none;
+
+    font-size:12px;
+
+    resize:vertical;
+}
+
+.delete-flow{
+    width:38px;
+    height:38px;
+
+    border:0;
+    border-radius:8px;
+
+    background:#3a3030;
+    color:#ff7777;
+
+    font-size:18px;
+}
+
+.add-flow,
+.save-settings{
+    width:100%;
+    height:45px;
+
+    border:0;
+    border-radius:10px;
+
+    background:#10c96b;
+
+    color:#fff;
+
+    margin-top:10px;
+}
+
+/* ================= EDITÁVEL ================= */
+
+.editable{
+    outline:none;
+}
+
+.editable:focus{
+    background:rgba(255,255,255,.06);
+}
+
+/* ================= RESPONSIVO ================= */
+
+@media(max-height:700px){
+
+    .dial-area{
+        top:85px;
+    }
+
+    .keypad{
+        top:205px;
+        row-gap:12px;
+    }
+
+    .bottom-area{
+        bottom:45px;
+    }
+
+    .sim-card{
+        bottom:8px;
+    }
+
+    .ussd-window{
+        padding-top:20px;
+    }
+
+    .ussd-message{
+        font-size:17px;
+    }
+
+    .ussd-buttons button{
+        font-size:18px;
+    }
+}
+
+@media(min-height:850px){
+
+    .keypad{
+        top:275px;
+        row-gap:31px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- TOPO -->
+
+<button class="top-plus"
+        onclick="openSettings()">+</button>
+
+<div class="topbar">
+    <span class="top-search">⌕</span>
+    <span class="top-more">⋮</span>
+</div>
+
+
+<!-- CÓDIGO -->
+
+<div class="dial-area">
+    <div id="dialDisplay"
+         class="dial-display"
+         contenteditable="true"
+         spellcheck="false"></div>
+</div>
+
+
+<!-- TECLADO -->
+
+<div class="keypad">
+
+<button class="key" onclick="pressKey('1')">
+    <span class="key-number">1</span>
+    <span class="key-label">1</span>
+</button>
+
+<button class="key" onclick="pressKey('2')">
+    <span class="key-number">2</span>
+    <span class="key-label">ABC</span>
+</button>
+
+<button class="key" onclick="pressKey('3')">
+    <span class="key-number">3</span>
+    <span class="key-label">DEF</span>
+</button>
+
+<button class="key" onclick="pressKey('4')">
+    <span class="key-number">4</span>
+    <span class="key-label">GHI</span>
+</button>
+
+<button class="key" onclick="pressKey('5')">
+    <span class="key-number">5</span>
+    <span class="key-label">JKL</span>
+</button>
+
+<button class="key" onclick="pressKey('6')">
+    <span class="key-number">6</span>
+    <span class="key-label">MNO</span>
+</button>
+
+<button class="key" onclick="pressKey('7')">
+    <span class="key-number">7</span>
+    <span class="key-label">PQRS</span>
+</button>
+
+<button class="key" onclick="pressKey('8')">
+    <span class="key-number">8</span>
+    <span class="key-label">TUV</span>
+</button>
+
+<button class="key" onclick="pressKey('9')">
+    <span class="key-number">9</span>
+    <span class="key-label">WXYZ</span>
+</button>
+
+<button class="key special" onclick="pressKey('*')">
+    <span class="key-number">*</span>
+    <span class="key-label">&nbsp;</span>
+</button>
+
+<button class="key" onclick="pressKey('0')">
+    <span class="key-number">0</span>
+    <span class="key-label">+</span>
+</button>
+
+<button class="key special" onclick="pressKey('#')">
+    <span class="key-number">#</span>
+    <span class="key-label">&nbsp;</span>
+</button>
+
+</div>
+
+
+<!-- BOTÕES INFERIORES -->
+
+<div class="bottom-area">
+
+<button class="video-button"
+        onclick="openSettings()">
+    <span class="video-icon"></span>
+</button>
+
+
+<button class="call-button"
+        onclick="startUSSD()">
+
+<svg class="phone-icon-new"
+     viewBox="0 0 24 24">
+<path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1C9.39 21 2 13.61 2 4c0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+</svg>
+
+</button>
+
+
+<button class="backspace-button"
+        onclick="backspace()">
+
+<span class="backspace-icon">
+    <span class="backspace-x">×</span>
+</span>
+
+</button>
+
+</div>
+
+
+<!-- SIM -->
+
+<div class="sim-card">
+    <span class="sim-icon">♟</span>
+    <span>SIM 1</span>
+</div>
+
+
+<div class="navbar">
+    <div class="navbar-line"></div>
+</div>
+
+
+<!-- PROCESSAMENTO -->
+
+<div id="processing"
+     class="processing">
+
+<div class="spinner"></div>
+
+<div class="processing-text editable"
+     contenteditable="true"
+     data-save="processingText">
+Processando...
+</div>
+
+</div>
+
+
+<!-- USSD -->
+
+<div id="ussdOverlay"
+     class="ussd-overlay">
+
+<div class="ussd-window">
+
+<div id="ussdMessage"
+     class="ussd-message"></div>
+
+<div class="ussd-input-line">
+
+<input id="ussdInput"
+       class="ussd-input"
+       type="text"
+       autocomplete="off">
+
+</div>
+
+<div class="ussd-buttons">
+
+<button onclick="cancelUSSD()">
+<span class="editable"
+      contenteditable="true"
+      data-save="cancelText">
+Cancelar
+</span>
+</button>
+
+<button onclick="sendUSSD()">
+<span class="editable"
+      contenteditable="true"
+      data-save="sendText">
+Enviar
+</span>
+</button>
+
+</div>
+
+</div>
+</div>
+
+
+<!-- RESULTADO -->
+
+<div id="resultOverlay"
+     class="result-overlay">
+
+<div class="result-window">
+
+<div id="resultText"
+     class="result-text editable"
+     contenteditable="true"
+     data-save="resultText">
+Confirmado.<br>
+O teu saldo é 135.00 MT.
+</div>
+
+<button class="result-ok"
+        onclick="closeResult()">
+
+<span class="editable"
+      contenteditable="true"
+      data-save="okText">
+OK
+</span>
+
+</button>
+
+</div>
+</div>
+
+
+<!-- PAINEL DE CONTROLO -->
+
+<div id="settingsOverlay"
+     class="settings-overlay">
+
+<div class="settings">
+
+<div class="settings-header">
+
+<div class="settings-title">
+Controlo
+</div>
+
+<button class="close-settings"
+        onclick="closeSettings()">
+×
+</button>
+
+</div>
+
+
+<div class="control-tabs">
+
+<button class="control-tab active"
+        onclick="showControlTab(0)">
+TAMANHO
+</button>
+
+<button class="control-tab"
+        onclick="showControlTab(1)">
+PROCESSO
+</button>
+
+<button class="control-tab"
+        onclick="showControlTab(2)">
+FLUXO
+</button>
+
+<button class="control-tab"
+        onclick="showControlTab(3)">
+TEXTO
+</button>
+
+</div>
+
+
+<!-- TAMANHO -->
+
+<div class="control-page active">
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho dos números
+</div>
+
+<input id="numberRange"
+       class="range"
+       type="range"
+       min="25"
+       max="65"
+       value="43">
+
+<div class="range-value">
+<span id="numberValue">43</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho das letras
+</div>
+
+<input id="labelRange"
+       class="range"
+       type="range"
+       min="8"
+       max="20"
+       value="14">
+
+<div class="range-value">
+<span id="labelValue">14</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do código
+</div>
+
+<input id="dialRange"
+       class="range"
+       type="range"
+       min="18"
+       max="45"
+       value="30">
+
+<div class="range-value">
+<span id="dialValue">30</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do botão vídeo
+</div>
+
+<input id="videoRange"
+       class="range"
+       type="range"
+       min="30"
+       max="70"
+       value="42">
+
+<div class="range-value">
+<span id="videoValue">42</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do botão chamada
+</div>
+
+<input id="callRange"
+       class="range"
+       type="range"
+       min="45"
+       max="100"
+       value="66">
+
+<div class="range-value">
+<span id="callValue">66</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do botão apagar
+</div>
+
+<input id="backRange"
+       class="range"
+       type="range"
+       min="30"
+       max="70"
+       value="46">
+
+<div class="range-value">
+<span id="backValue">46</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do SIM 1
+</div>
+
+<input id="simRange"
+       class="range"
+       type="range"
+       min="8"
+       max="20"
+       value="13">
+
+<div class="range-value">
+<span id="simValue">13</span> px
+</div>
+
+</div>
+
+</div>
+
+
+<!-- PROCESSAMENTO -->
+
+<div class="control-page">
+
+<div class="setting">
+
+<div class="setting-title">
+Tempo de processamento
+</div>
+
+<div class="time-buttons">
+
+<button onclick="setProcessingTime(1200,this)">
+1,2s
+</button>
+
+<button onclick="setProcessingTime(2000,this)">
+2s
+</button>
+
+<button class="selected"
+        onclick="setProcessingTime(2800,this)">
+2,8s
+</button>
+
+<button onclick="setProcessingTime(4000,this)">
+4s
+</button>
+
+</div>
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Altura do processamento
+</div>
+
+<input id="processHeightRange"
+       class="range"
+       type="range"
+       min="60"
+       max="140"
+       value="86">
+
+<div class="range-value">
+<span id="processHeightValue">86</span> px
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Tamanho do texto
+</div>
+
+<input id="processTextRange"
+       class="range"
+       type="range"
+       min="12"
+       max="28"
+       value="19">
+
+<div class="range-value">
+<span id="processTextValue">19</span> px
+</div>
+
+</div>
+
+</div>
+
+
+<!-- FLUXO -->
+
+<div class="control-page">
+
+<div id="flowList"
+     class="flow-list">
+</div>
+
+<button class="add-flow"
+        onclick="addFlow()">
++ Adicionar fluxo
+</button>
+
+</div>
+
+
+<!-- TEXTO -->
+
+<div class="control-page">
+
+<div class="setting">
+
+<div class="setting-title">
+Texto do processamento
+</div>
+
+<input id="processingTextEdit"
+       type="text"
+       value="Processando..."
+       style="width:100%;height:42px;background:#303134;border:1px solid #444;border-radius:9px;color:#fff;padding:10px;outline:none;">
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Texto cancelar
+</div>
+
+<input id="cancelEdit"
+       type="text"
+       value="Cancelar"
+       style="width:100%;height:42px;background:#303134;border:1px solid #444;border-radius:9px;color:#fff;padding:10px;outline:none;">
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Texto enviar
+</div>
+
+<input id="sendEdit"
+       type="text"
+       value="Enviar"
+       style="width:100%;height:42px;background:#303134;border:1px solid #444;border-radius:9px;color:#fff;padding:10px;outline:none;">
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Resultado final
+</div>
+
+<textarea id="resultEdit"
+          style="width:100%;min-height:100px;background:#303134;border:1px solid #444;border-radius:9px;color:#fff;padding:10px;outline:none;">Confirmado.
+O teu saldo é 135.00 MT.</textarea>
+
+</div>
+
+</div>
+
+
+<button class="save-settings"
+        onclick="saveAllSettings()">
+Guardar alterações
+</button>
+
+</div>
+</div>
+
+</div>
+
+
+<script>
+
+const defaultFlow=[
+{
+ text:"1. Saldo<br>2. Extrato<br>3. Alterar PIN<br>4. Cancelar conta<br>5. Redefinir PIN<br>6. Reverter transacao<br>7. Confirmar reversao<br>8. Voucher de pagamento<br>9. Reenviar SMS<br>10. T&C<br>11. Atualizar<br>12. ENG",
+ answer:"1"
+},
+{
+ text:"1. Consultar Saldo<br>2. Saldo da Conta Promocional<br>3. Consulta de Movimentos<br>4. Extracto<br>5. Xitique Agente Vodacom<br>6. Confirmar Transacção<br>7. Consultar Limites<br>8. Ver Pontos",
+ answer:"1"
+},
+{
+ text:"1. Consultar Saldo - SMS<br>2. Consultar Saldo - ATM",
+ answer:"1"
+}
+];
+
+let flow=
+JSON.parse(localStorage.getItem("ussdFlow"))
+||defaultFlow;
+
+let currentStep=-1;
+let dialCode="";
+
+const dialDisplay=document.getElementById("dialDisplay");
+const ussdOverlay=document.getElementById("ussdOverlay");
+const ussdMessage=document.getElementById("ussdMessage");
+const ussdInput=document.getElementById("ussdInput");
+const processing=document.getElementById("processing");
+const resultOverlay=document.getElementById("resultOverlay");
+
+
+/* ================= TECLADO ================= */
+
+function pressKey(key){
+
+    dialCode+=key;
+
+    dialDisplay.textContent=dialCode;
+}
+
+
+/* ================= APAGAR ================= */
+
+function backspace(){
+
+    dialCode=dialCode.slice(0,-1);
+
+    dialDisplay.textContent=dialCode;
+}
+
+
+/* ================= CHAMADA ================= */
+
+function startUSSD(){
+
+    if(!dialCode.trim()){
+        return;
+    }
+
+    showProcessing(function(){
+
+        currentStep=0;
+
+        openStep();
+
+    });
+}
+
+
+/* ================= ABRIR FLUXO ================= */
+
+function openStep(){
+
+    if(currentStep>=flow.length){
+
+        showResult();
+
+        return;
+    }
+
+    const item=flow[currentStep];
+
+    ussdMessage.innerHTML=
+        '<div class="editable" '+
+        'contenteditable="true" '+
+        'data-flow="'+currentStep+'">'+
+        item.text+
+        '</div>';
+
+    ussdOverlay.classList.add("show");
+
+    ussdInput.value="";
+
+    setTimeout(function(){
+        ussdInput.focus();
+    },150);
+}
+
+
+/* ================= ENVIAR ================= */
+
+function sendUSSD(){
+
+    const answer=ussdInput.value.trim();
+
+    if(!answer){
+        return;
+    }
+
+    saveVisibleFlow();
+
+    ussdOverlay.classList.remove("show");
+
+    showProcessing(function(){
+
+        currentStep++;
+
+        openStep();
+
+    });
+}
+
+
+/* ================= CANCELAR ================= */
+
+function cancelUSSD(){
+
+    ussdOverlay.classList.remove("show");
+
+    currentStep=-1;
+
+    dialCode="";
+
+    dialDisplay.textContent="";
+}
+
+
+/* ================= PROCESSAMENTO ================= */
+
+function showProcessing(callback){
+
+    processing.classList.add("show");
+
+    const tempo=
+        Number(localStorage.getItem("processingTime"))
+        ||2800;
+
+    setTimeout(function(){
+
+        processing.classList.remove("show");
+
+        callback();
+
+    },tempo);
+}
+
+
+/* ================= RESULTADO ================= */
+
+function showResult(){
+
+    const saved=
+        localStorage.getItem("resultText");
+
+    document.getElementById("resultText").innerHTML=
+        saved||
+        "Confirmado.<br>O teu saldo é 135.00 MT.";
+
+    resultOverlay.classList.add("show");
+}
+
+
+function closeResult(){
+
+    resultOverlay.classList.remove("show");
+
+    currentStep=-1;
+
+    dialCode="";
+
+    dialDisplay.textContent="";
+}
+
+
+/* ================= PAINEL ================= */
+
+function openSettings(){
+
+    renderFlow();
+    loadSettings();
+
+    document
+        .getElementById("settingsOverlay")
+        .classList.add("show");
+}
+
+
+function closeSettings(){
+
+    saveAllSettings();
+
+    document
+        .getElementById("settingsOverlay")
+        .classList.remove("show");
+}
+
+
+/* ================= ABAS ================= */
+
+function showControlTab(index){
+
+    document
+        .querySelectorAll(".control-tab")
+        .forEach(function(tab,i){
+            tab.classList.toggle("active",i===index);
+        });
+
+    document
+        .querySelectorAll(".control-page")
+        .forEach(function(page,i){
+            page.classList.toggle("active",i===index);
+        });
+}
+
+
+/* ================= TEMPO ================= */
+
+function setProcessingTime(ms,button){
+
+    localStorage.setItem(
+        "processingTime",
+        ms
+    );
+
+    document
+        .querySelectorAll(".time-buttons button")
+        .forEach(function(btn){
+            btn.classList.remove("selected");
+        });
+
+    button.classList.add("selected");
+}
+
+
+/* ================= TAMANHOS ================= */
+
+function bindRange(id,valueId,variable,storage){
+
+    const range=document.getElementById(id);
+    const value=document.getElementById(valueId);
+
+    range.addEventListener("input",function(){
+
+        const v=this.value;
+
+        document.documentElement
+            .style
+            .setProperty(variable,v+"px");
+
+        value.textContent=v;
+
+        localStorage.setItem(storage,v);
+    });
+}
+
+
+bindRange("numberRange","numberValue","--numero","numero");
+bindRange("labelRange","labelValue","--letra","letra");
+bindRange("dialRange","dialValue","--codigo","codigo");
+bindRange("videoRange","videoValue","--video","video");
+bindRange("callRange","callValue","--chamada","chamada");
+bindRange("backRange","backValue","--apagar","apagar");
+bindRange("simRange","simValue","--sim","sim");
+bindRange("processHeightRange","processHeightValue","--processamento-altura","processHeight");
+bindRange("processTextRange","processTextValue","--processamento-tamanho","processText");
+
+
+/* ================= FLUXO ================= */
+
+function renderFlow(){
+
+    const list=document.getElementById("flowList");
+
+    list.innerHTML="";
+
+    flow.forEach(function(item,index){
+
+        const row=document.createElement("div");
+
+        row.className="flow-item";
+
+        row.innerHTML=`
+
+        <div class="flow-number">
+            ${index+1}
+        </div>
+
+        <textarea
+            data-flow-edit="${index}"
+            placeholder="Texto da aba">${stripHTML(item.text)}</textarea>
+
+        <button
+            class="delete-flow"
+            title="Eliminar fluxo"
+            onclick="deleteFlow(${index})">
+            ×
+        </button>
+
+        `;
+
+        row
+        .querySelector("textarea")
+        .addEventListener("input",function(){
+
+            flow[index].text=
+                this.value.replace(/\n/g,"<br>");
+
+            saveFlow();
+
+        });
+
+        list.appendChild(row);
+    });
+}
+
+
+/* ================= ADICIONAR FLUXO ================= */
+
+function addFlow(){
+
+    flow.push({
+        text:
+        "1. Nova opção\n"+
+        "2. Segunda opção\n"+
+        "3. Terceira opção",
+        answer:"1"
+    });
+
+    saveFlow();
+    renderFlow();
+}
+
+
+/* ================= ELIMINAR FLUXO ================= */
+
+function deleteFlow(index){
+
+    if(flow.length<=1){
+        alert("É necessário manter pelo menos um fluxo.");
+        return;
+    }
+
+    flow.splice(index,1);
+
+    saveFlow();
+
+    renderFlow();
+}
+
+
+/* ================= SALVAR FLUXO ================= */
+
+function saveFlow(){
+
+    localStorage.setItem(
+        "ussdFlow",
+        JSON.stringify(flow)
+    );
+}
+
+
+/* ================= SALVAR FLUXO VISÍVEL ================= */
+
+function saveVisibleFlow(){
+
+    const el=
+        ussdMessage.querySelector("[data-flow]");
+
+    if(!el){
+        return;
+    }
+
+    const index=
+        Number(el.dataset.flow);
+
+    if(flow[index]){
+
+        flow[index].text=
+            el.innerHTML;
+
+        saveFlow();
+    }
+}
+
+
+/* ================= SALVAR CONFIGURAÇÕES ================= */
+
+function saveAllSettings(){
+
+    const processingText=
+        document.getElementById("processingTextEdit").value;
+
+    const cancelText=
+        document.getElementById("cancelEdit").value;
+
+    const sendText=
+        document.getElementById("sendEdit").value;
+
+    const resultText=
+        document.getElementById("resultEdit").value;
+
+    localStorage.setItem(
+        "processingText",
+        processingText
+    );
+
+    localStorage.setItem(
+        "cancelText",
+        cancelText
+    );
+
+    localStorage.setItem(
+        "sendText",
+        sendText
+    );
+
+    localStorage.setItem(
+        "resultText",
+        resultText.replace(/\n/g,"<br>")
+    );
+
+    saveFlow();
+
+    document.querySelector(".processing-text")
+        .textContent=processingText;
+
+    document.querySelector(
+        ".ussd-buttons button:first-child span"
+    ).textContent=cancelText;
+
+    document.querySelector(
+        ".ussd-buttons button:last-child span"
+    ).textContent=sendText;
+}
+
+
+/* ================= CARREGAR ================= */
+
+function loadSettings(){
+
+    const data={
+        numero:localStorage.getItem("numero")||43,
+        letra:localStorage.getItem("letra")||14,
+        codigo:localStorage.getItem("codigo")||30,
+        video:localStorage.getItem("video")||42,
+        chamada:localStorage.getItem("chamada")||66,
+        apagar:localStorage.getItem("apagar")||46,
+        sim:localStorage.getItem("sim")||13,
+        processHeight:localStorage.getItem("processHeight")||86,
+        processText:localStorage.getItem("processText")||19
+    };
+
+    setCSS("--numero",data.numero);
+    setCSS("--letra",data.letra);
+    setCSS("--codigo",data.codigo);
+    setCSS("--video",data.video);
+    setCSS("--chamada",data.chamada);
+    setCSS("--apagar",data.apagar);
+    setCSS("--sim",data.sim);
+    setCSS("--processamento-altura",data.processHeight);
+    setCSS("--processamento-tamanho",data.processText);
+
+    setRange("numberRange","numberValue",data.numero);
+    setRange("labelRange","labelValue",data.letra);
+    setRange("dialRange","dialValue",data.codigo);
+    setRange("videoRange","videoValue",data.video);
+    setRange("callRange","callValue",data.chamada);
+    setRange("backRange","backValue",data.apagar);
+    setRange("simRange","simValue",data.sim);
+    setRange("processHeightRange","processHeightValue",data.processHeight);
+    setRange("processTextRange","processTextValue",data.processText);
+
+    document.getElementById("processingTextEdit").value=
+        localStorage.getItem("processingText")
+        ||"Processando...";
+
+    document.getElementById("cancelEdit").value=
+        localStorage.getItem("cancelText")
+        ||"Cancelar";
+
+    document.getElementById("sendEdit").value=
+        localStorage.getItem("sendText")
+        ||"Enviar";
+
+    document.getElementById("resultEdit").value=
+        (
+            localStorage.getItem("resultText")
+            ||
+            "Confirmado.\nO teu saldo é 135.00 MT."
+        ).replace(/<br>/g,"\n");
+}
+
+
+function setCSS(variable,value){
+
+    document.documentElement
+        .style
+        .setProperty(variable,value+"px");
+}
+
+
+function setRange(id,valueId,value){
+
+    document.getElementById(id).value=value;
+
+    document.getElementById(valueId)
+        .textContent=value;
+}
+
+
+/* ================= EDIÇÃO DIRETA ================= */
+
+document.addEventListener("input",function(event){
+
+    const el=
+        event.target.closest("[data-save]");
+
+    if(!el){
+        return;
+    }
+
+    localStorage.setItem(
+        el.dataset.save,
+        el.innerHTML
+    );
+});
+
+
+/* ================= LIMPAR HTML ================= */
+
+function stripHTML(text){
+
+    return String(text)
+        .replace(/<br\s*\/?>/gi,"\n")
+        .replace(/<[^>]*>/g,"");
+}
+
+
+/* ================= ENTER ================= */
+
+ussdInput.addEventListener("keydown",function(event){
+
+    if(event.key==="Enter"){
+
+        event.preventDefault();
+
+        sendUSSD();
+    }
+});
+
+
+/* ================= INICIALIZAÇÃO ================= */
+
+window.addEventListener("load",function(){
+
+    loadSettings();
+
+    const saved=
+        localStorage.getItem("processingText");
+
+    if(saved){
+
+        document.querySelector(".processing-text")
+            .textContent=saved;
+    }
+});
+
+</script>
+
+</body>
+  </html>
