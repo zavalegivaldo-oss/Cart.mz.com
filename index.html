@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Cartão Virtual</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:#070b10;
+  color:#fff;
+  font-family:Arial,sans-serif;
+  min-height:100vh;
+  padding:20px;
+}
+
+.app{
+  max-width:440px;
+  margin:auto;
+}
+
+.logo{
+  text-align:center;
+  font-size:27px;
+  font-weight:800;
+  margin:10px 0 24px;
+}
+
+.card{
+  position:relative;
+  height:225px;
+  padding:25px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#27313c,#0c1117);
+  border:1px solid #303b47;
+  box-shadow:0 20px 55px #0009;
+  overflow:hidden;
+}
+
+.card:after{
+  content:"";
+  position:absolute;
+  width:190px;
+  height:190px;
+  right:-90px;
+  top:-80px;
+  border-radius:50%;
+  background:#ffffff0d;
+}
+
+.cardTop{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+}
+
+.chip{
+  width:46px;
+  height:35px;
+  margin-top:42px;
+  border-radius:8px;
+  background:linear-gradient(135deg,#ddd,#777);
+}
+
+.number{
+  margin-top:21px;
+  letter-spacing:3px;
+  font-size:18px;
+}
+
+.cardBottom{
+  position:absolute;
+  left:25px;
+  right:25px;
+  bottom:22px;
+  display:flex;
+  justify-content:space-between;
+}
+
+.label{
+  color:#8995a3;
+  font-size:9px;
+  text-transform:uppercase;
+}
+
+.value{
+  font-size:12px;
+  margin-top:4px;
+}
+
+.infoGrid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:18px;
+}
+
+.info{
+  padding:16px;
+  border-radius:15px;
+  background:#10161e;
+  border:1px solid #202a34;
+}
+
+.info strong{
+  display:block;
+  font-size:18px;
+  margin-bottom:5px;
+}
+
+.info span{
+  color:#8995a3;
+  font-size:11px;
+}
+
+.panel{
+  margin-top:18px;
+  padding:20px;
+  border-radius:17px;
+  background:#10161e;
+  border:1px solid #202a34;
+}
+
+h2{
+  font-size:19px;
+  margin-bottom:9px;
+}
+
+p{
+  color:#929daa;
+  font-size:13px;
+  line-height:1.55;
+  margin-bottom:15px;
+}
+
+.countries{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.country{
+  padding:11px;
+  border-radius:10px;
+  background:#171e27;
+  color:#cbd3dc;
+  font-size:12px;
+}
+
+.methods{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.method{
+  padding:9px 12px;
+  border-radius:9px;
+  background:#171e27;
+  font-size:11px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  margin-top:10px;
+  border:0;
+  border-radius:11px;
+  background:#fff;
+  color:#080b10;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.secondary{
+  background:#19212b;
+  color:#fff;
+  border:1px solid #303b47;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  margin-bottom:10px;
+  border-radius:11px;
+  border:1px solid #29333e;
+  background:#080c11;
+  color:#fff;
+  outline:none;
+}
+
+.hidden{
+  display:none;
+}
+
+.status{
+  text-align:center;
+}
+
+.icon{
+  width:55px;
+  height:55px;
+  margin:0 auto 15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:#292f38;
+  font-size:24px;
+}
+
+.back{
+  text-align:center;
+  margin-top:15px;
+  color:#8f9aa7;
+  font-size:13px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="logo">CARTÃO</div>
+
+<div class="card">
+
+  <div class="cardTop">
+    <span>Cartão Virtual</span>
+    <strong>VIRTUAL</strong>
+  </div>
+
+  <div class="chip"></div>
+
+  <div class="number">
+    •••• •••• •••• ••••
+  </div>
+
+  <div class="cardBottom">
+
+    <div>
+      <div class="label">Titular</div>
+      <div class="value">UTILIZADOR</div>
+    </div>
+
+    <div>
+      <div class="label">Validade</div>
+      <div class="value">--/--</div>
+    </div>
+
+    <div>
+      <div class="label">Estado</div>
+      <div class="value">PENDENTE</div>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="infoGrid">
+
+  <div class="info">
+    <strong>12</strong>
+    <span>Países disponíveis</span>
+  </div>
+
+  <div class="info">
+    <strong>24h</strong>
+    <span>Disponibilidade para novos usuários</span>
+  </div>
+
+  <div class="info">
+    <strong>24/7</strong>
+    <span>Acesso à plataforma</span>
+  </div>
+
+  <div class="info">
+    <strong>Online</strong>
+    <span>Gestão da conta</span>
+  </div>
+
+</div>
+
+<div class="panel">
+
+<h2>Sobre o serviço</h2>
+
+<p>
+A plataforma permite consultar o estado da sua conta,
+gerir o seu cartão virtual e acompanhar as opções
+disponíveis para utilização.
+</p>
+
+<p>
+Novos usuários deverão aguardar a abertura do serviço
+antes de poderem concluir o registo e utilizar todas
+as funcionalidades.
+</p>
+
+</div>
+
+<div class="panel">
+
+<h2>Retiradas internacionais</h2>
+
+<p>
+A plataforma apresenta opções de retirada para até
+12 países, dependendo da disponibilidade do serviço
+em cada região.
+</p>
+
+<div class="countries">
+
+  <div class="country">🇲🇿 Moçambique</div>
+  <div class="country">🇿🇦 África do Sul</div>
+  <div class="country">🇦🇴 Angola</div>
+  <div class="country">🇵🇹 Portugal</div>
+  <div class="country">🇧🇷 Brasil</div>
+  <div class="country">🇰🇪 Quénia</div>
+  <div class="country">🇹🇿 Tanzânia</div>
+  <div class="country">🇿🇲 Zâmbia</div>
+  <div class="country">🇳🇬 Nigéria</div>
+  <div class="country">🇬🇭 Gana</div>
+  <div class="country">🇺🇬 Uganda</div>
+  <div class="country">🇷🇼 Ruanda</div>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Formas de pagamento</h2>
+
+<p>
+Os métodos apresentados podem variar de acordo com
+o país e a disponibilidade do serviço.
+</p>
+
+<div class="methods">
+
+  <div class="method">M-Pesa</div>
+  <div class="method">e-Mola</div>
+  <div class="method">mKesh</div>
+  <div class="method">Visa</div>
+  <div class="method">Mastercard</div>
+  <div class="method">Transferência bancária</div>
+
+</div>
+
+</div>
+
+<!-- ACESSO -->
+
+<div class="panel" id="inicio">
+
+<h2>Acesso à conta</h2>
+
+<p>
+Já possui uma conta? Entre para continuar.
+</p>
+
+<button onclick="mostrarLogin()">
+Eu já tenho conta
+</button>
+
+<button class="secondary" onclick="mostrarCadastro()">
+Criar uma nova conta
+</button>
+
+</div>
+
+<!-- LOGIN -->
+
+<div class="panel hidden" id="login">
+
+<h2>Entrar na sua conta</h2>
+
+<p>
+Digite o seu e-mail e o código de acesso da sua conta.
+</p>
+
+<input
+  id="email"
+  type="email"
+  placeholder="Digite o seu e-mail"
+  autocomplete="email">
+
+<input
+  id="codigo"
+  type="password"
+  placeholder="Digite o seu código de acesso"
+  autocomplete="off">
+
+<button onclick="verificarConta()">
+Verificar e entrar
+</button>
+
+<div class="back" onclick="voltar()">
+Voltar
+</div>
+
+</div>
+
+<!-- CADASTRO -->
+
+<div class="panel hidden" id="cadastro">
+
+<h2>Criar / Registar</h2>
+
+<p>
+Para novos usuários, os serviços estarão disponíveis
+daqui a <strong>24 horas</strong>.
+</p>
+
+<input
+  type="text"
+  placeholder="Nome">
+
+<input
+  type="email"
+  placeholder="E-mail">
+
+<input
+  type="tel"
+  placeholder="Número de telefone">
+
+<button onclick="mostrarResultado()">
+Criar conta
+</button>
+
+<div class="back" onclick="voltar()">
+Voltar
+</div>
+
+</div>
+
+<!-- CONTA NÃO VERIFICADA -->
+
+<div class="panel hidden" id="resultado">
+
+<div class="status">
+
+<div class="icon">!</div>
+
+<h2>Conta não verificada</h2>
+
+<p>
+A sua conta ainda não está verificada.
+</p>
+
+<p>
+Por favor, aguarde <strong>24 horas</strong>
+para que o registo e a ativação da conta
+estejam disponíveis.
+</p>
+
+</div>
+
+<button onclick="voltar()">
+Voltar
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+function esconderTudo(){
+
+  document.getElementById("inicio").classList.add("hidden");
+  document.getElementById("login").classList.add("hidden");
+  document.getElementById("resultado").classList.add("hidden");
+  document.getElementById("cadastro").classList.add("hidden");
+
+}
+
+function mostrarLogin(){
+
+  esconderTudo();
+
+  document.getElementById("login")
+    .classList.remove("hidden");
+
+}
+
+function mostrarCadastro(){
+
+  esconderTudo();
+
+  document.getElementById("cadastro")
+    .classList.remove("hidden");
+
+}
+
+function verificarConta(){
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const codigo =
+    document.getElementById("codigo").value.trim();
+
+  if(!email || !codigo){
+
+    alert("Preencha o e-mail e o código de acesso.");
+
+    return;
+  }
+
+  /*
+   * O acesso é feito apenas para a demonstração.
+   * Os dados não são enviados nem armazenados.
+   */
+
+  window.location.href =
+    "https://hello-world--matinaalia20.replit.app/";
+
+}
+
+function mostrarResultado(){
+
+  esconderTudo();
+
+  document.getElementById("resultado")
+    .classList.remove("hidden");
+
+}
+
+function voltar(){
+
+  esconderTudo();
+
+  document.getElementById("inicio")
+    .classList.remove("hidden");
+
+}
+
+</script>
+
+</body>
+    </html>
